@@ -7,7 +7,7 @@ namespace BuscadorFinanceiro.Controllers
     {
         public List<string> ProcuraPeloNome(List<ClienteModel> clientes, List<PagamentoModel> pagamentos, string result, string nome)
         {
-            List<string> response = new List<string> { "teste" };
+            List<string> response = new List<string> { };
             bool show = false;
             if (result == "1") show = true;
 
@@ -25,65 +25,78 @@ namespace BuscadorFinanceiro.Controllers
                     {
                         if ((show == true && p.Pago == "t") || p.Pago == "f")
                         {
-                            result = p.Pago == "t" ? "realizado" : "emdívida";
+                            result = p.Pago == "t" ? "realizado" : "em dívida";
 
-                            response.Add($"Data:{p.Data}Valor:{p.Valor}Pagamento{result}");
-                            Console.WriteLine($"Data:{p.Data}Valor:{p.Valor}Pagamento{result}");
+                            response.Add($"Data: {p.Data}\tValor: {p.Valor}\tPagamento {result}");
+                            Console.WriteLine($"Data: {p.Data}\tValor: {p.Valor}\tPagamento {result}");
                             entered = true;
                         }
                     }
 
                     if (entered == false)
+                    {
                         Console.WriteLine("Cliente sem dívidas");
+                        response.Add("Cliente sem dívidas");
+                    }
+
                 }
                 else
                 {
                     Console.WriteLine("Nenhum valor pendente!");
+                    response.Add("Nenhum valor pendente!");
                 }
             }
             else
             {
                 Console.WriteLine("Cliente não encontrado na base de dados!");
+                response.Add("Cliente não encontrado na base de dados!");
             }
 
             return response;
 
         }
 
-        public void ProcuraPeloValorSuperior(List<ClienteModel> clientes, List<PagamentoModel> pagamentos)
+        public List<string> ProcuraPeloValorSuperior(List<ClienteModel> clientes, List<PagamentoModel> pagamentos, string? valor)
         {
-            Console.WriteLine("Digite o valor mínimo da dívida (se quiser visualizar todas as dívidas no sistema, digite 0): ");
-            string valor = Console.ReadLine();
-
-            var pagamentosEncontrados = pagamentos.Where(pagamento => pagamento.Valor >= double.Parse(valor) && pagamento.Pago == "f").ToList();
+            List<string> response = new List<string> { "erro" };
+            List<PagamentoModel> pagamentosEncontrados;
+            try
+            {
+                pagamentosEncontrados = pagamentos.Where(pagamento => pagamento.Valor >= double.Parse(valor) && pagamento.Pago == "f").ToList();
+            }
+            catch
+            {
+                return response;
+            }
 
             if (pagamentosEncontrados.Count > 0)
             {
+                response.Clear();
                 foreach (var p in pagamentosEncontrados)
                 {
-                    var clienteEncontrado = clientes.Where(c => c.Id == p.Id).FirstOrDefault();
+                    var clienteEncontrado = clientes.Where(c => c.Id == p.ClientId).FirstOrDefault();
 
                     if (clienteEncontrado != null)
                     {
-                        Console.WriteLine($"Cliente: {clienteEncontrado.Nome}\tValor: {p.Valor}\tData: {p.Data}");
+                        response.Add($"Cliente: {clienteEncontrado.Nome}\tValor: {p.Valor}\tData: {p.Data?.ToString("dd/MM/yyyy")}");
+                        Console.WriteLine($"Cliente: {clienteEncontrado.Nome}\tValor: {p.Valor}\tData: {p.Data?.ToString("dd/MM/yyyy")}");
                     }
                     else
                     {
-                        Console.WriteLine($"Cliente: Não identificado\tValor: {String.Format("{0:0.00}", p.Valor)}\tData: {p.Data}");
+                        Console.WriteLine($"Cliente: Não identificado\tValor: {String.Format("{0:0.00}", p.Valor)}\tData: {p.Data?.ToString("dd/MM/yyyy")}");
                     }
                 }
                 Console.WriteLine($"Há um total de {pagamentosEncontrados.Count} dívidas acima desse valor");
             }
+
+            return response;
         }
 
-        public void RelatorioCompleto(List<ClienteModel> clientes, List<PagamentoModel> pagamentos)
+        public int RelatorioCompleto(List<ClienteModel> clientes, List<PagamentoModel> pagamentos, string? result)
         {
-
-            Console.WriteLine("Você deseja:\n0-Consultar apenas as dívidas\n1-Consultar apenas os pagamentos");
-            string result = Console.ReadLine();
+            List<string> response = new List<string> { };
             bool pagos = false;
             if (result == "1") pagos = true;
-
 
             var grupoPorDia = pagamentos.OrderBy(pagamento => pagamento.Data).GroupBy(pagamento => pagamento.Data).ToList();
 
@@ -103,13 +116,14 @@ namespace BuscadorFinanceiro.Controllers
                     }
                 }
                 if (pagos == false && soma > 0)
+                {
+                    response.Add($"\tDia: {grupo.First().Data}\tValor total das dívidas {soma.Value.ToString("N2")}");
                     Console.WriteLine($"\tDia: {grupo.First().Data}\tValor total das dívidas {soma.Value.ToString("N2")}");
+                }
                 else if (pagos == true && soma > 0)
                     Console.WriteLine($"\tDia: {grupo.First().Data}\tValor total dos pagamentos {soma.Value.ToString("N2")}");
-
-
             }
-
+            return response.Count();
             Console.WriteLine("\n");
         }
     }

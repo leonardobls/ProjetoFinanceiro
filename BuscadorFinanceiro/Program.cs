@@ -36,10 +36,14 @@ while (true)
             acoes.ProcuraPeloNome(newClients, newPagamentos, result, nome);
             break;
         case "2":
-            acoes.ProcuraPeloValorSuperior(newClients, newPagamentos);
+            Console.WriteLine("Digite o valor mínimo da dívida (se quiser visualizar todas as dívidas no sistema, digite 0): ");
+            string valor = Console.ReadLine();
+            acoes.ProcuraPeloValorSuperior(newClients, newPagamentos, valor);
             break;
         case "3":
-            acoes.RelatorioCompleto(newClients, newPagamentos);
+            Console.WriteLine("Você deseja:\n0-Consultar apenas as dívidas\n1-Consultar apenas os pagamentos");
+            string resultado = Console.ReadLine();
+            acoes.RelatorioCompleto(newClients, newPagamentos, resultado);
             break;
         case "0":
             Console.WriteLine("Saindo!");
