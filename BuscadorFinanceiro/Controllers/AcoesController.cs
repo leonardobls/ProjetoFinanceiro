@@ -26,9 +26,8 @@ namespace BuscadorFinanceiro.Controllers
                         if ((show == true && p.Pago == "t") || p.Pago == "f")
                         {
                             result = p.Pago == "t" ? "realizado" : "em dívida";
-
-                            response.Add($"Data: {p.Data}\tValor: {p.Valor}\tPagamento {result}");
-                            Console.WriteLine($"Data: {p.Data}\tValor: {p.Valor}\tPagamento {result}");
+                            response.Add($"Data: {p.Data?.ToString("dd/MM/yyyy")}\tValor: {p.Valor}\tPagamento {result}");
+                            Console.WriteLine($"Data: {p.Data?.ToString("dd/MM/yyyy")}\tValor: {p.Valor}\tPagamento {result}");
                             entered = true;
                         }
                     }

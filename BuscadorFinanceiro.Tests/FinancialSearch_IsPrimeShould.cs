@@ -24,8 +24,8 @@ namespace BuscadorFinanceiro.Tests
 
             List<string> result = _financialSearch.ProcuraPeloNome(newClients, newPagamentos, "0", "cliente 3");
 
-            List<string> resultadoEsperado = new List<string> { "Data: 18/01/2014 02:00:00\tValor: 10\tPagamento em dívida",
-            "Data: 10/01/2014 02:00:00\tValor: 8\tPagamento em dívida" };
+            List<string> resultadoEsperado = new List<string> { "Data: 18/01/2014\tValor: 10\tPagamento em dívida",
+            "Data: 10/01/2014\tValor: 8\tPagamento em dívida" };
             Assert.That(result, Is.EqualTo(resultadoEsperado), "Não foi");
         }
 
@@ -53,6 +53,7 @@ namespace BuscadorFinanceiro.Tests
             Assert.That(result, Is.EqualTo(resultadoEsperado), "Não foi");
         }
 
+        [Test]
         public void ProcuraPeloNomeTodosPagamentosTest()
         {
             List<ClienteModel> newClients = _context.Cliente.ToList();
@@ -60,11 +61,11 @@ namespace BuscadorFinanceiro.Tests
 
             List<string> result = _financialSearch.ProcuraPeloNome(newClients, newPagamentos, "1", "cliente 29");
 
-            List<string> resultadoEsperado = new List<string> { "Data: 14/04/2014 02:00:00\tValor: 200\tPagamento realizado",
-            "Data: 05/03/2014 02:00:00\tValor: 400\tPagamento realizado", "Data: 08/08/2014 02:00:00\tValor: 10\tPagamento realizado",
-            "Data: 16/01/2014 02:00:00\tValor: 50\tPagamento em dívida", "Data: 05/02/2014 02:00:00\tValor: 450\tPagamento em dívida",
-            "Data: 19/02/2014 02:00:00\tValor: 150\tPagamento em dívida", "Data: 05/03/2014 02:00:00\tValor: 50\tPagamento realizado",
-            "Data: 05/02/2014 02:00:00\tValor: 130\tPagamento em dívida" };
+            List<string> resultadoEsperado = new List<string> { "Data: 14/04/2014\tValor: 200\tPagamento realizado",
+            "Data: 05/03/2014\tValor: 400\tPagamento realizado", "Data: 08/08/2014\tValor: 10\tPagamento realizado",
+            "Data: 16/01/2014\tValor: 50\tPagamento em dívida", "Data: 05/02/2014\tValor: 450\tPagamento em dívida",
+            "Data: 19/02/2014\tValor: 150\tPagamento em dívida", "Data: 05/03/2014\tValor: 50\tPagamento realizado",
+            "Data: 05/02/2014\tValor: 130\tPagamento em dívida" };
             Assert.That(result, Is.EqualTo(resultadoEsperado), "Não foi");
         }
 
